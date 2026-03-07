@@ -1,0 +1,264 @@
+{
+  "name": "sitecore-devtools",
+  "displayName": "Sitecore DevTools",
+  "description": "GUI interface for Sitecore CLI serialization modules - manage Sitecore XM Cloud / Sitecore AI projects without manual CLI commands",
+  "version": "1.0.0",
+  "publisher": "sitecore-devtools",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "sitecore",
+    "xm cloud",
+    "serialization",
+    "cli",
+    "devtools"
+  ],
+  "activationEvents": [
+    "workspaceContains:**/module.json"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "sitecoreDevtools",
+          "title": "Sitecore DevTools",
+          "icon": "$(package)"
+        }
+      ]
+    },
+    "views": {
+      "sitecoreDevtools": [
+        {
+          "id": "serializationModules",
+          "name": "Serialization Modules",
+          "icon": "$(package)",
+          "contextualTitle": "Sitecore Serialization Modules"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "sitecoreDevtools.refreshModules",
+        "title": "Refresh Modules",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "sitecoreDevtools.pullModule",
+        "title": "Pull Module",
+        "icon": "$(cloud-download)"
+      },
+      {
+        "command": "sitecoreDevtools.pushModule",
+        "title": "Push Module",
+        "icon": "$(cloud-upload)"
+      },
+      {
+        "command": "sitecoreDevtools.pullAllModules",
+        "title": "Pull All Modules",
+        "icon": "$(cloud-download)"
+      },
+      {
+        "command": "sitecoreDevtools.pullSelectedModules",
+        "title": "Pull Selected Modules",
+        "icon": "$(checklist)"
+      },
+      {
+        "command": "sitecoreDevtools.smartSync",
+        "title": "Smart Sync",
+        "icon": "$(sync)"
+      },
+      {
+        "command": "sitecoreDevtools.login",
+        "title": "Sitecore: Login",
+        "icon": "$(sign-in)"
+      },
+      {
+        "command": "sitecoreDevtools.logout",
+        "title": "Sitecore: Logout",
+        "icon": "$(sign-out)"
+      },
+      {
+        "command": "sitecoreDevtools.checkLoginStatus",
+        "title": "Sitecore: Check Login Status",
+        "icon": "$(account)"
+      },
+      {
+        "command": "sitecoreDevtools.createModule",
+        "title": "Sitecore: Create Module",
+        "icon": "$(new-file)"
+      },
+      {
+        "command": "sitecoreDevtools.pullCheckedModules",
+        "title": "Pull Checked Modules",
+        "icon": "$(cloud-download)"
+      },
+      {
+        "command": "sitecoreDevtools.pushCheckedModules",
+        "title": "Push Checked Modules",
+        "icon": "$(cloud-upload)"
+      },
+      {
+        "command": "sitecoreDevtools.selectAllModules",
+        "title": "Select All Modules",
+        "icon": "$(check-all)"
+      },
+      {
+        "command": "sitecoreDevtools.deselectAllModules",
+        "title": "Deselect All Modules",
+        "icon": "$(close-all)"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "sitecoreDevtools.refreshModules",
+          "when": "view == serializationModules",
+          "group": "navigation@1"
+        },
+        {
+          "command": "sitecoreDevtools.pullAllModules",
+          "when": "view == serializationModules",
+          "group": "navigation@2"
+        },
+        {
+          "command": "sitecoreDevtools.pullSelectedModules",
+          "when": "view == serializationModules",
+          "group": "navigation@3"
+        },
+        {
+          "command": "sitecoreDevtools.smartSync",
+          "when": "view == serializationModules",
+          "group": "navigation@4"
+        },
+        {
+          "command": "sitecoreDevtools.login",
+          "when": "view == serializationModules",
+          "group": "navigation@5"
+        },
+        {
+          "command": "sitecoreDevtools.createModule",
+          "when": "view == serializationModules",
+          "group": "navigation@6"
+        },
+        {
+          "command": "sitecoreDevtools.pullCheckedModules",
+          "when": "view == serializationModules",
+          "group": "2_checked@1"
+        },
+        {
+          "command": "sitecoreDevtools.pushCheckedModules",
+          "when": "view == serializationModules",
+          "group": "2_checked@2"
+        },
+        {
+          "command": "sitecoreDevtools.selectAllModules",
+          "when": "view == serializationModules",
+          "group": "3_selection@1"
+        },
+        {
+          "command": "sitecoreDevtools.deselectAllModules",
+          "when": "view == serializationModules",
+          "group": "3_selection@2"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "sitecoreDevtools.pullModule",
+          "when": "view == serializationModules && viewItem == module",
+          "group": "inline@1"
+        },
+        {
+          "command": "sitecoreDevtools.pushModule",
+          "when": "view == serializationModules && viewItem == module",
+          "group": "inline@2"
+        },
+        {
+          "command": "sitecoreDevtools.pullModule",
+          "when": "view == serializationModules && viewItem == module",
+          "group": "module@1"
+        },
+        {
+          "command": "sitecoreDevtools.pushModule",
+          "when": "view == serializationModules && viewItem == module",
+          "group": "module@2"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Sitecore DevTools",
+      "properties": {
+        "sitecoreDevtools.environment": {
+          "type": "string",
+          "default": "dev",
+          "description": "The Sitecore environment to use for CLI commands"
+        },
+        "sitecoreDevtools.autoRefreshModules": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically refresh modules when module.json files are added or removed"
+        },
+        "sitecoreDevtools.login.clientId": {
+          "type": "string",
+          "default": "",
+          "description": "Default Client ID for client credentials login"
+        },
+        "sitecoreDevtools.login.clientCredentialsLogin": {
+          "type": "boolean",
+          "default": false,
+          "description": "Use client credentials login by default"
+        },
+        "sitecoreDevtools.login.deviceCodeAuth": {
+          "type": "boolean",
+          "default": false,
+          "description": "Use device code authentication by default"
+        },
+        "sitecoreDevtools.login.allowWrite": {
+          "type": "boolean",
+          "default": true,
+          "description": "Allow write operations by default"
+        },
+        "sitecoreDevtools.login.authority": {
+          "type": "string",
+          "default": "",
+          "description": "Custom authority URL for authentication"
+        },
+        "sitecoreDevtools.login.audience": {
+          "type": "string",
+          "default": "",
+          "description": "Custom audience for authentication"
+        },
+        "sitecoreDevtools.module.defaultNamespace": {
+          "type": "string",
+          "default": "",
+          "description": "Default namespace for new modules"
+        },
+        "sitecoreDevtools.module.defaultSerializationPath": {
+          "type": "string",
+          "default": "items",
+          "description": "Default serialization path for new modules"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@types/vscode": "^1.85.0",
+    "@typescript-eslint/eslint-plugin": "^6.13.0",
+    "@typescript-eslint/parser": "^6.13.0",
+    "eslint": "^8.54.0",
+    "typescript": "^5.3.2"
+  }
+}
