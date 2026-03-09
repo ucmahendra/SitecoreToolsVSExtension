@@ -31,9 +31,9 @@ export interface ModuleIncludeConfig {
 export class ConfigService {
   private static readonly CONFIG_SECTION = "sitecoreDevtools";
 
-  public static getEnvironment(): string {
+  public static getEnvironment(): string | undefined {
     const config = vscode.workspace.getConfiguration(this.CONFIG_SECTION);
-    return config.get<string>("environment", "dev");
+    return config.get<string>("environment") || undefined;
   }
 
   public static getAutoRefreshModules(): boolean {

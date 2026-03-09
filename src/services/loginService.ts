@@ -12,6 +12,7 @@ export interface LoginOptions {
   environmentName?: string;
   authority?: string;
   audience?: string;
+  cmUrl?: string;
 }
 
 export class LoginService {
@@ -64,14 +65,49 @@ export class LoginService {
     TerminalRunner.runCommand(command);
   }
 
+  public static async loginToEnvironment(options: LoginOptions): Promise<void> {
+    const environmentName =
+      options.environmentName || ConfigService.getEnvironment();
+
+    if (!options.authority || !options.cmUrl) {
+      throw new Error(
+        "Authority and CM URL are required for environment login",
+      );
+    }
+
+    let command = `dotnet sitecore login --authority "${options.authority}" --cm "${options.cmUrl}" --environment-name "${environmentName}"`;
+
+    if (options.clientCredentialsLogin) {
+      command += " --client-credentials";
+      if (options.clientId) {
+        command += ` --client-id "${options.clientId}"`;
+      }
+      if (options.clientSecret) {
+        command += ` --client-secret "${options.clientSecret}"`;
+      }
+    }
+
+    if (options.allowWrite) {
+      command += " --allow-write true";
+    }
+
+    Logger.info(`Executing Sitecore environment login for: ${environmentName}`);
+    TerminalRunner.runCommand(command);
+  }
+
   public static async loginWithPrompt(): Promise<void> {
     const config = ConfigService.getLoginConfig();
 
     const loginMethod = await vscode.window.showQuickPick(
       [
         {
-          label: "$(browser) Interactive Login",
-          description: "Login via browser (default)",
+          label: "$(server) Environment Login",
+          description: "Login to define an environment for serialization",
+          value: "environment",
+        },
+        {
+          label: "$(cloud) Cloud Login",
+          description: "Login to Sitecore Cloud via browser",
           value: "interactive",
         },
         {
@@ -97,7 +133,10 @@ export class LoginService {
 
     const options: LoginOptions = {};
 
-    if (loginMethod.value === "deviceCode") {
+    if (loginMethod.value === "environment") {
+      await this.loginToEnvironmentWithPrompt();
+      return;
+    } else if (loginMethod.value === "deviceCode") {
       options.deviceCodeAuth = true;
     } else if (loginMethod.value === "clientCredentials") {
       options.clientCredentialsLogin = true;
@@ -141,6 +180,58 @@ export class LoginService {
     }
 
     await this.login(options);
+  }
+
+  public static async loginToEnvironmentWithPrompt(): Promise<void> {
+    const environmentName = await vscode.window.showInputBox({
+      prompt: "Enter environment name",
+      value: ConfigService.getEnvironment() || "dev",
+      placeHolder: "e.g., dev, staging, production",
+    });
+
+    if (!environmentName) {
+      return;
+    }
+
+    const authority = await vscode.window.showInputBox({
+      prompt: "Enter Identity Server URL (authority)",
+      placeHolder:
+        "https://id.sitecorecloud.io or https://your-identity-server",
+    });
+
+    if (!authority) {
+      return;
+    }
+
+    const cmUrl = await vscode.window.showInputBox({
+      prompt: "Enter CM instance URL",
+      placeHolder: "https://your-cm-instance.sitecorecloud.io",
+    });
+
+    if (!cmUrl) {
+      return;
+    }
+
+    const allowWrite = await vscode.window.showQuickPick(
+      [
+        { label: "Yes", description: "Allow write operations", value: true },
+        { label: "No", description: "Read-only access", value: false },
+      ],
+      {
+        placeHolder: "Allow write operations?",
+        title: "Write Permission",
+      },
+    );
+
+    const options: LoginOptions = {
+      environmentName,
+      authority,
+      cmUrl,
+      allowWrite: allowWrite?.value ?? true,
+    };
+
+    await ConfigService.setEnvironment(environmentName);
+    await this.loginToEnvironment(options);
   }
 
   public static async logout(): Promise<void> {

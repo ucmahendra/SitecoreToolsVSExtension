@@ -2,7 +2,7 @@
   "name": "sitecore-devtools",
   "displayName": "Sitecore DevTools",
   "description": "GUI interface for Sitecore CLI serialization modules - manage Sitecore XM Cloud / Sitecore AI projects without manual CLI commands",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "publisher": "sitecore-devtools",
   "engines": {
     "vscode": "^1.85.0"
@@ -38,6 +38,12 @@
           "name": "Serialization Modules",
           "icon": "$(package)",
           "contextualTitle": "Sitecore Serialization Modules"
+        },
+        {
+          "id": "sitecoreCliCommands",
+          "name": "CLI Commands",
+          "icon": "$(terminal)",
+          "contextualTitle": "Sitecore CLI Commands"
         }
       ]
     },
@@ -111,6 +117,91 @@
         "command": "sitecoreDevtools.deselectAllModules",
         "title": "Deselect All Modules",
         "icon": "$(close-all)"
+      },
+      {
+        "command": "sitecoreDevtools.init",
+        "title": "Sitecore: Initialize Project",
+        "icon": "$(folder-opened)"
+      },
+      {
+        "command": "sitecoreDevtools.pluginAdd",
+        "title": "Sitecore: Add Plugin",
+        "icon": "$(extensions)"
+      },
+      {
+        "command": "sitecoreDevtools.pluginRemove",
+        "title": "Sitecore: Remove Plugin",
+        "icon": "$(trash)"
+      },
+      {
+        "command": "sitecoreDevtools.pluginList",
+        "title": "Sitecore: List Plugins",
+        "icon": "$(list-unordered)"
+      },
+      {
+        "command": "sitecoreDevtools.publish",
+        "title": "Sitecore: Publish",
+        "icon": "$(globe)"
+      },
+      {
+        "command": "sitecoreDevtools.publishSite",
+        "title": "Sitecore: Publish Site",
+        "icon": "$(globe)"
+      },
+      {
+        "command": "sitecoreDevtools.indexRebuild",
+        "title": "Sitecore: Rebuild Index",
+        "icon": "$(search)"
+      },
+      {
+        "command": "sitecoreDevtools.indexPopulate",
+        "title": "Sitecore: Populate Index",
+        "icon": "$(search)"
+      },
+      {
+        "command": "sitecoreDevtools.indexSchemaPopulate",
+        "title": "Sitecore: Populate Index Schema",
+        "icon": "$(search)"
+      },
+      {
+        "command": "sitecoreDevtools.packageCreate",
+        "title": "Sitecore: Create Item Resource Package",
+        "icon": "$(package)"
+      },
+      {
+        "command": "sitecoreDevtools.serPackageCreate",
+        "title": "Sitecore: Create Serialization Package",
+        "icon": "$(archive)"
+      },
+      {
+        "command": "sitecoreDevtools.serPackageInstall",
+        "title": "Sitecore: Install Serialization Package",
+        "icon": "$(desktop-download)"
+      },
+      {
+        "command": "sitecoreDevtools.cloudProjectList",
+        "title": "Sitecore: List Cloud Projects",
+        "icon": "$(cloud)"
+      },
+      {
+        "command": "sitecoreDevtools.cloudEnvironmentList",
+        "title": "Sitecore: List Cloud Environments",
+        "icon": "$(server-environment)"
+      },
+      {
+        "command": "sitecoreDevtools.cloudDeploymentCreate",
+        "title": "Sitecore: Create Cloud Deployment",
+        "icon": "$(rocket)"
+      },
+      {
+        "command": "sitecoreDevtools.cloudDeploymentList",
+        "title": "Sitecore: List Cloud Deployments",
+        "icon": "$(list-tree)"
+      },
+      {
+        "command": "sitecoreDevtools.connect",
+        "title": "Sitecore: Connect to Environment",
+        "icon": "$(plug)"
       }
     ],
     "menus": {
@@ -194,8 +285,8 @@
       "properties": {
         "sitecoreDevtools.environment": {
           "type": "string",
-          "default": "dev",
-          "description": "The Sitecore environment to use for CLI commands"
+          "default": "",
+          "description": "The Sitecore environment to use for CLI commands (leave empty for cloud login)"
         },
         "sitecoreDevtools.autoRefreshModules": {
           "type": "boolean",

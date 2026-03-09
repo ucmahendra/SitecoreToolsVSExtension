@@ -131,11 +131,14 @@ export class ModuleScannerService {
         }
       }
 
+      const references: string[] = moduleJson.references || [];
+
       return {
         name: moduleName,
         path: modulePath,
         folder: folder,
         includePaths: includePaths,
+        references: references,
       };
     } catch (error) {
       Logger.error(

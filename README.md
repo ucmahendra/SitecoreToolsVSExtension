@@ -4,6 +4,8 @@ A VS Code extension that provides a GUI interface for Sitecore CLI serialization
 
 ## Features
 
+### Serialization
+
 - **Activity Bar Integration**: Dedicated Sitecore DevTools panel in the VS Code Activity Bar
 - **Module Detection**: Automatically scans workspace for `module.json` files
 - **TreeView UI**: Visual representation of all serialization modules with package icons
@@ -15,16 +17,51 @@ A VS Code extension that provides a GUI interface for Sitecore CLI serialization
 - **Output Logging**: Dedicated output channel for command logging and debugging
 - **Environment Configuration**: Configurable environment setting for CLI commands
 
+### Project Setup
+
+- **Initialize Project**: Run `dotnet sitecore init` to set up a new Sitecore CLI project
+- **Connect to Environment**: Connect to XM Cloud or on-premise Sitecore instances
+
+### Plugin Management
+
+- **Add Plugin**: Install Sitecore CLI plugins (Serialization, Publishing, Indexing, ResourcePackage)
+- **Remove Plugin**: Uninstall Sitecore CLI plugins
+- **List Plugins**: View all installed plugins
+
+### Publishing
+
+- **Publish**: Execute publish operations with configurable options (smart/full/incremental)
+- **Publish Site**: Publish a specific site
+
+### Indexing
+
+- **Rebuild Index**: Rebuild search indexes
+- **Populate Index**: Populate search indexes
+- **Populate Index Schema**: Populate index schemas
+
+### Packages
+
+- **Create Item Resource Package**: Create item resource packages using `dotnet sitecore itemres`
+- **Create Serialization Package**: Create serialization packages
+- **Install Serialization Package**: Install serialization packages to Sitecore
+
+### XM Cloud
+
+- **List Projects**: View XM Cloud projects
+- **List Environments**: View XM Cloud environments
+- **Create Deployment**: Create new XM Cloud deployments
+- **List Deployments**: View deployment history
+
 ## Screenshots
 
 ![Sitecore DevTools Panel](images/panel-placeholder.png)
-*Sitecore DevTools Activity Bar with Serialization Modules TreeView*
+_Sitecore DevTools Activity Bar with Serialization Modules TreeView_
 
 ![Context Menu](images/context-menu-placeholder.png)
-*Right-click context menu for Pull/Push operations*
+_Right-click context menu for Pull/Push operations_
 
 ![Smart Sync](images/smart-sync-placeholder.png)
-*Smart Sync detecting and pulling changed modules*
+_Smart Sync detecting and pulling changed modules_
 
 ## Requirements
 
@@ -80,21 +117,79 @@ Click the refresh button in the TreeView toolbar to manually rescan for modules.
 
 ## Extension Commands
 
-| Command | Description |
-|---------|-------------|
-| `sitecoreDevtools.refreshModules` | Refresh the modules list |
-| `sitecoreDevtools.pullModule` | Pull a specific module |
-| `sitecoreDevtools.pushModule` | Push a specific module |
-| `sitecoreDevtools.pullAllModules` | Pull all detected modules |
+### Serialization Commands
+
+| Command                                | Description                               |
+| -------------------------------------- | ----------------------------------------- |
+| `sitecoreDevtools.refreshModules`      | Refresh the modules list                  |
+| `sitecoreDevtools.pullModule`          | Pull a specific module                    |
+| `sitecoreDevtools.pushModule`          | Push a specific module                    |
+| `sitecoreDevtools.pullAllModules`      | Pull all detected modules                 |
 | `sitecoreDevtools.pullSelectedModules` | Open QuickPick to select and pull modules |
-| `sitecoreDevtools.smartSync` | Detect and pull changed modules |
+| `sitecoreDevtools.smartSync`           | Detect and pull changed modules           |
+| `sitecoreDevtools.createModule`        | Create a new serialization module         |
+
+### Project Setup Commands
+
+| Command                    | Description                           |
+| -------------------------- | ------------------------------------- |
+| `sitecoreDevtools.init`    | Initialize a new Sitecore CLI project |
+| `sitecoreDevtools.connect` | Connect to a Sitecore environment     |
+
+### Authentication Commands
+
+| Command                             | Description                |
+| ----------------------------------- | -------------------------- |
+| `sitecoreDevtools.login`            | Login to Sitecore          |
+| `sitecoreDevtools.logout`           | Logout from Sitecore       |
+| `sitecoreDevtools.checkLoginStatus` | Check current login status |
+
+### Plugin Commands
+
+| Command                         | Description                  |
+| ------------------------------- | ---------------------------- |
+| `sitecoreDevtools.pluginAdd`    | Add a Sitecore CLI plugin    |
+| `sitecoreDevtools.pluginRemove` | Remove a Sitecore CLI plugin |
+| `sitecoreDevtools.pluginList`   | List installed plugins       |
+
+### Publishing Commands
+
+| Command                        | Description                  |
+| ------------------------------ | ---------------------------- |
+| `sitecoreDevtools.publish`     | Publish content with options |
+| `sitecoreDevtools.publishSite` | Publish a specific site      |
+
+### Indexing Commands
+
+| Command                                | Description           |
+| -------------------------------------- | --------------------- |
+| `sitecoreDevtools.indexRebuild`        | Rebuild search index  |
+| `sitecoreDevtools.indexPopulate`       | Populate search index |
+| `sitecoreDevtools.indexSchemaPopulate` | Populate index schema |
+
+### Package Commands
+
+| Command                              | Description                   |
+| ------------------------------------ | ----------------------------- |
+| `sitecoreDevtools.packageCreate`     | Create item resource package  |
+| `sitecoreDevtools.serPackageCreate`  | Create serialization package  |
+| `sitecoreDevtools.serPackageInstall` | Install serialization package |
+
+### XM Cloud Commands
+
+| Command                                  | Description                |
+| ---------------------------------------- | -------------------------- |
+| `sitecoreDevtools.cloudProjectList`      | List XM Cloud projects     |
+| `sitecoreDevtools.cloudEnvironmentList`  | List XM Cloud environments |
+| `sitecoreDevtools.cloudDeploymentCreate` | Create XM Cloud deployment |
+| `sitecoreDevtools.cloudDeploymentList`   | List XM Cloud deployments  |
 
 ## Extension Settings
 
-| Setting | Type | Default | Description |
-|---------|------|---------|-------------|
-| `sitecoreDevtools.environment` | string | `dev` | The Sitecore environment to use for CLI commands |
-| `sitecoreDevtools.autoRefreshModules` | boolean | `true` | Automatically refresh modules when module.json files change |
+| Setting                               | Type    | Default | Description                                                 |
+| ------------------------------------- | ------- | ------- | ----------------------------------------------------------- |
+| `sitecoreDevtools.environment`        | string  | `dev`   | The Sitecore environment to use for CLI commands            |
+| `sitecoreDevtools.autoRefreshModules` | boolean | `true`  | Automatically refresh modules when module.json files change |
 
 ## Module.json Format
 
@@ -119,17 +214,47 @@ The extension expects `module.json` files in the following format:
 The extension executes the following Sitecore CLI commands:
 
 ```bash
+# Initialize project
+dotnet sitecore init
+
 # Pull module
-dotnet sitecore ser pull --module <ModuleName> --environment <env>
+dotnet sitecore serialization pull --include <ModuleName> --environment-name <env>
 
 # Push module
-dotnet sitecore ser push --module <ModuleName> --environment <env>
+dotnet sitecore serialization push --include <ModuleName> --environment-name <env>
 
 # Pull multiple modules
-dotnet sitecore ser pull --module <Module1> --module <Module2> --environment <env>
+dotnet sitecore serialization pull --include <Module1> --include <Module2> --environment-name <env>
 
 # Get serialization status (for Smart Sync)
-dotnet sitecore ser status --environment <env>
+dotnet sitecore serialization pull --what-if --environment-name <env>
+
+# Plugin management
+dotnet sitecore plugin add -n <PluginName>
+dotnet sitecore plugin remove -n <PluginName>
+dotnet sitecore plugin list
+
+# Publishing
+dotnet sitecore publish --environment-name <env>
+dotnet sitecore publish --environment-name <env> --site <siteName>
+
+# Indexing
+dotnet sitecore index rebuild --environment-name <env>
+dotnet sitecore index populate --environment-name <env>
+dotnet sitecore index schema-populate --environment-name <env>
+
+# Packages
+dotnet sitecore itemres create -o <outputPath>
+dotnet sitecore ser package create -o <outputPath>
+dotnet sitecore ser package install -p <packagePath> --environment-name <env>
+
+# XM Cloud
+dotnet sitecore cloud login
+dotnet sitecore cloud logout
+dotnet sitecore cloud project list
+dotnet sitecore cloud environment list
+dotnet sitecore cloud deployment create --environment-id <envId>
+dotnet sitecore cloud deployment list
 ```
 
 ## Output Channel
@@ -205,6 +330,17 @@ MIT
 Contributions are welcome! Please open an issue or submit a pull request.
 
 ## Changelog
+
+### 1.1.0
+
+- Added CLI Commands tree view in sidebar
+- Added Initialize Project command (`dotnet sitecore init`)
+- Added Connect to Environment command
+- Added Plugin management (add, remove, list)
+- Added Publishing commands (publish, publish site)
+- Added Indexing commands (rebuild, populate, schema-populate)
+- Added Package commands (itemres create, ser package create/install)
+- Added XM Cloud commands (project list, environment list, deployment create/list)
 
 ### 1.0.0
 

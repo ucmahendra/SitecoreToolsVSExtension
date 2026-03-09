@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import { ModulesTreeProvider } from "./providers/modulesTreeProvider";
+import { CliCommandsTreeProvider } from "./providers/cliCommandsTreeProvider";
 import { PullModuleCommand } from "./commands/pullModuleCommand";
 import { PushModuleCommand } from "./commands/pushModuleCommand";
 import { PullAllModulesCommand } from "./commands/pullAllModulesCommand";
@@ -17,6 +18,30 @@ import {
   SelectAllModulesCommand,
   DeselectAllModulesCommand,
 } from "./commands/pullCheckedModulesCommand";
+import { InitCommand } from "./commands/initCommand";
+import {
+  PluginAddCommand,
+  PluginRemoveCommand,
+  PluginListCommand,
+} from "./commands/pluginCommand";
+import { PublishCommand, PublishSiteCommand } from "./commands/publishCommand";
+import {
+  IndexRebuildCommand,
+  IndexPopulateCommand,
+  IndexSchemaPopulateCommand,
+} from "./commands/indexCommand";
+import {
+  PackageCreateCommand,
+  SerPackageCreateCommand,
+  SerPackageInstallCommand,
+} from "./commands/packageCommand";
+import {
+  CloudProjectListCommand,
+  CloudEnvironmentListCommand,
+  CloudDeploymentCreateCommand,
+  CloudDeploymentListCommand,
+  ConnectCommand,
+} from "./commands/cloudCommand";
 import { ConfigService } from "./services/configService";
 import { LoginService } from "./services/loginService";
 import { Logger } from "./utils/logger";
@@ -24,6 +49,7 @@ import { TerminalRunner } from "./utils/terminalRunner";
 import { LoginStatusBarItem } from "./ui/loginStatusBarItem";
 
 let modulesTreeProvider: ModulesTreeProvider;
+let cliCommandsTreeProvider: CliCommandsTreeProvider;
 let fileWatcher: vscode.FileSystemWatcher;
 let loginStatusBarItem: LoginStatusBarItem;
 
@@ -32,6 +58,7 @@ export function activate(context: vscode.ExtensionContext): void {
   Logger.info("Sitecore DevTools extension is activating...");
 
   modulesTreeProvider = new ModulesTreeProvider();
+  cliCommandsTreeProvider = new CliCommandsTreeProvider();
 
   const treeView = vscode.window.createTreeView("serializationModules", {
     treeDataProvider: modulesTreeProvider,
@@ -45,7 +72,16 @@ export function activate(context: vscode.ExtensionContext): void {
     });
   });
 
+  const cliCommandsTreeView = vscode.window.createTreeView(
+    "sitecoreCliCommands",
+    {
+      treeDataProvider: cliCommandsTreeProvider,
+      showCollapseAll: true,
+    },
+  );
+
   context.subscriptions.push(treeView);
+  context.subscriptions.push(cliCommandsTreeView);
 
   const pullModuleCommand = new PullModuleCommand();
   const pushModuleCommand = new PushModuleCommand();
@@ -70,6 +106,25 @@ export function activate(context: vscode.ExtensionContext): void {
   const deselectAllModulesCommand = new DeselectAllModulesCommand(
     modulesTreeProvider,
   );
+
+  // New CLI commands
+  const initCommand = new InitCommand();
+  const pluginAddCommand = new PluginAddCommand();
+  const pluginRemoveCommand = new PluginRemoveCommand();
+  const pluginListCommand = new PluginListCommand();
+  const publishCommand = new PublishCommand();
+  const publishSiteCommand = new PublishSiteCommand();
+  const indexRebuildCommand = new IndexRebuildCommand();
+  const indexPopulateCommand = new IndexPopulateCommand();
+  const indexSchemaPopulateCommand = new IndexSchemaPopulateCommand();
+  const packageCreateCommand = new PackageCreateCommand();
+  const serPackageCreateCommand = new SerPackageCreateCommand();
+  const serPackageInstallCommand = new SerPackageInstallCommand();
+  const cloudProjectListCommand = new CloudProjectListCommand();
+  const cloudEnvironmentListCommand = new CloudEnvironmentListCommand();
+  const cloudDeploymentCreateCommand = new CloudDeploymentCreateCommand();
+  const cloudDeploymentListCommand = new CloudDeploymentListCommand();
+  const connectCommand = new ConnectCommand();
 
   // Initialize login status bar
   loginStatusBarItem = new LoginStatusBarItem();
@@ -174,6 +229,124 @@ export function activate(context: vscode.ExtensionContext): void {
         deselectAllModulesCommand.execute();
       },
     ),
+  );
+
+  // Register new CLI commands
+  context.subscriptions.push(
+    vscode.commands.registerCommand("sitecoreDevtools.init", () => {
+      initCommand.execute();
+    }),
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand("sitecoreDevtools.pluginAdd", () => {
+      pluginAddCommand.execute();
+    }),
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand("sitecoreDevtools.pluginRemove", () => {
+      pluginRemoveCommand.execute();
+    }),
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand("sitecoreDevtools.pluginList", () => {
+      pluginListCommand.execute();
+    }),
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand("sitecoreDevtools.publish", () => {
+      publishCommand.execute();
+    }),
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand("sitecoreDevtools.publishSite", () => {
+      publishSiteCommand.execute();
+    }),
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand("sitecoreDevtools.indexRebuild", () => {
+      indexRebuildCommand.execute();
+    }),
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand("sitecoreDevtools.indexPopulate", () => {
+      indexPopulateCommand.execute();
+    }),
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand(
+      "sitecoreDevtools.indexSchemaPopulate",
+      () => {
+        indexSchemaPopulateCommand.execute();
+      },
+    ),
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand("sitecoreDevtools.packageCreate", () => {
+      packageCreateCommand.execute();
+    }),
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand("sitecoreDevtools.serPackageCreate", () => {
+      serPackageCreateCommand.execute();
+    }),
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand(
+      "sitecoreDevtools.serPackageInstall",
+      () => {
+        serPackageInstallCommand.execute();
+      },
+    ),
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand("sitecoreDevtools.cloudProjectList", () => {
+      cloudProjectListCommand.execute();
+    }),
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand(
+      "sitecoreDevtools.cloudEnvironmentList",
+      () => {
+        cloudEnvironmentListCommand.execute();
+      },
+    ),
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand(
+      "sitecoreDevtools.cloudDeploymentCreate",
+      () => {
+        cloudDeploymentCreateCommand.execute();
+      },
+    ),
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand(
+      "sitecoreDevtools.cloudDeploymentList",
+      () => {
+        cloudDeploymentListCommand.execute();
+      },
+    ),
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand("sitecoreDevtools.connect", () => {
+      connectCommand.execute();
+    }),
   );
 
   setupFileWatcher(context);

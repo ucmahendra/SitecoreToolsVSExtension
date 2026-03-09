@@ -6,6 +6,7 @@ export interface ModuleInclude {
 export interface ModuleJson {
   namespace?: string;
   name?: string;
+  references?: string[];
   items?: {
     includes?: ModuleInclude[];
   };
@@ -37,4 +38,5 @@ export interface Module {
   path: string;
   folder: string;
   includePaths: string[];
+  references: string[];
 }
