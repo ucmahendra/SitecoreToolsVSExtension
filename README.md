@@ -9,13 +9,36 @@ A VS Code extension that provides a GUI interface for Sitecore CLI serialization
 - **Activity Bar Integration**: Dedicated Sitecore DevTools panel in the VS Code Activity Bar
 - **Module Detection**: Automatically scans workspace for `module.json` files
 - **TreeView UI**: Visual representation of all serialization modules with package icons
+- **Inline Actions**: Pull and push buttons appear directly inline on each module item
 - **Pull/Push Operations**: Right-click context menu for individual module operations
+- **Checkbox Selection**: Check individual modules in the TreeView and bulk pull or push them
+- **Select / Deselect All**: One-click to select or deselect all modules in the list
 - **Pull All Modules**: One-click to pull all detected modules
 - **Pull Selected Modules**: QuickPick interface to select multiple modules for pulling
 - **Smart Sync**: Automatically detect changed modules and pull only those that need syncing
 - **File Watcher**: Automatically refreshes when `module.json` files are added, removed, or modified
 - **Output Logging**: Dedicated output channel for command logging and debugging
 - **Environment Configuration**: Configurable environment setting for CLI commands
+
+### Module Creation
+
+- **Create Module Wizard**: Guided 5-step wizard to scaffold a new serialization module:
+  1. Select namespace layer (Feature / Foundation / Project / Custom)
+  2. Enter module name (validated for alphanumeric format)
+  3. Choose folder location via a folder picker dialog
+  4. Set serialization path (defaults to `items`)
+  5. Add one or more include paths with scope, allowed push operations, and database options
+- **Auto-opens `module.json`** after creation and triggers a module list refresh
+
+### Authentication
+
+- **Multiple Login Methods**: Choose from four authentication flows via QuickPick:
+  - **Environment Login** — for on-premise / non-cloud Sitecore instances (prompts for authority URL and CM URL)
+  - **Cloud Login** — browser-based OAuth flow for XM Cloud
+  - **Device Code** — headless / CI-friendly device code authentication
+  - **Client Credentials** — service-account login using Client ID and Client Secret
+- **Login Status Bar Item**: Always-visible status bar indicator showing logged-in state; click to login or logout
+- **Check Login Status**: Verify current authentication state
 
 ### Project Setup
 
@@ -89,9 +112,15 @@ _Smart Sync detecting and pulling changed modules_
 
 ### Pull/Push Individual Module
 
-1. Right-click on a module in the TreeView
-2. Select "Pull Module" or "Push Module"
-3. The command executes in the integrated terminal
+1. Right-click on a module in the TreeView and select "Pull Module" or "Push Module"
+2. Alternatively, use the inline pull (⬇) or push (⬆) icon buttons visible on each module row
+
+### Checkbox-Based Bulk Pull/Push
+
+1. Check one or more modules using the checkboxes in the TreeView
+2. Use the "Pull Checked Modules" or "Push Checked Modules" buttons in the toolbar
+3. Push operations require confirmation before executing
+4. Use "Select All Modules" / "Deselect All Modules" toolbar buttons to quickly check or uncheck everything
 
 ### Pull All Modules
 
@@ -111,6 +140,27 @@ _Smart Sync detecting and pulling changed modules_
 3. Changed items are mapped to their respective modules
 4. Only affected modules are pulled
 
+### Create a New Module
+
+1. Click the "Create Module" button in the TreeView toolbar (or run the `Sitecore: Create Module` command)
+2. Follow the 5-step wizard:
+   - **Step 1** — Select a namespace layer: Feature, Foundation, Project, or enter a custom namespace
+   - **Step 2** — Enter the module name (alphanumeric, must start with a letter)
+   - **Step 3** — Choose the folder where the module directory will be created
+   - **Step 4** — Set the serialization subfolder path (default: `items`)
+   - **Step 5** — Add include paths with optional scope, allowed push operations, and database
+3. The generated `module.json` opens automatically and the module list refreshes
+
+### Login
+
+1. Click the status bar item (bottom left) or use the login button in the TreeView toolbar
+2. Choose an authentication method:
+   - **Environment Login** — enter environment name, Identity Server URL, and CM URL
+   - **Cloud Login** — browser-based OAuth for XM Cloud
+   - **Device Code** — authenticate on a separate device
+   - **Client Credentials** — enter Client ID and Client Secret
+3. The status bar updates to reflect the logged-in state
+
 ### Refresh Modules
 
 Click the refresh button in the TreeView toolbar to manually rescan for modules.
@@ -119,15 +169,19 @@ Click the refresh button in the TreeView toolbar to manually rescan for modules.
 
 ### Serialization Commands
 
-| Command                                | Description                               |
-| -------------------------------------- | ----------------------------------------- |
-| `sitecoreDevtools.refreshModules`      | Refresh the modules list                  |
-| `sitecoreDevtools.pullModule`          | Pull a specific module                    |
-| `sitecoreDevtools.pushModule`          | Push a specific module                    |
-| `sitecoreDevtools.pullAllModules`      | Pull all detected modules                 |
-| `sitecoreDevtools.pullSelectedModules` | Open QuickPick to select and pull modules |
-| `sitecoreDevtools.smartSync`           | Detect and pull changed modules           |
-| `sitecoreDevtools.createModule`        | Create a new serialization module         |
+| Command                                | Description                                           |
+| -------------------------------------- | ----------------------------------------------------- |
+| `sitecoreDevtools.refreshModules`      | Refresh the modules list                              |
+| `sitecoreDevtools.pullModule`          | Pull a specific module                                |
+| `sitecoreDevtools.pushModule`          | Push a specific module                                |
+| `sitecoreDevtools.pullAllModules`      | Pull all detected modules                             |
+| `sitecoreDevtools.pullSelectedModules` | Open QuickPick to select and pull modules             |
+| `sitecoreDevtools.smartSync`           | Detect and pull changed modules                       |
+| `sitecoreDevtools.createModule`        | Open the guided wizard to create a new module         |
+| `sitecoreDevtools.pullCheckedModules`  | Pull all checkbox-checked modules                     |
+| `sitecoreDevtools.pushCheckedModules`  | Push all checkbox-checked modules (with confirmation) |
+| `sitecoreDevtools.selectAllModules`    | Check all modules in the TreeView                     |
+| `sitecoreDevtools.deselectAllModules`  | Uncheck all modules in the TreeView                   |
 
 ### Project Setup Commands
 
@@ -186,28 +240,64 @@ Click the refresh button in the TreeView toolbar to manually rescan for modules.
 
 ## Extension Settings
 
-| Setting                               | Type    | Default | Description                                                 |
-| ------------------------------------- | ------- | ------- | ----------------------------------------------------------- |
-| `sitecoreDevtools.environment`        | string  | `dev`   | The Sitecore environment to use for CLI commands            |
-| `sitecoreDevtools.autoRefreshModules` | boolean | `true`  | Automatically refresh modules when module.json files change |
+### General
+
+| Setting                               | Type    | Default | Description                                                                    |
+| ------------------------------------- | ------- | ------- | ------------------------------------------------------------------------------ |
+| `sitecoreDevtools.environment`        | string  | `""`    | The Sitecore environment to use for CLI commands (leave empty for cloud login) |
+| `sitecoreDevtools.autoRefreshModules` | boolean | `true`  | Automatically refresh modules when `module.json` files are added or removed    |
+
+### Login
+
+| Setting                                         | Type    | Default | Description                                    |
+| ----------------------------------------------- | ------- | ------- | ---------------------------------------------- |
+| `sitecoreDevtools.login.clientId`               | string  | `""`    | Default Client ID for client credentials login |
+| `sitecoreDevtools.login.clientCredentialsLogin` | boolean | `false` | Use client credentials login by default        |
+| `sitecoreDevtools.login.deviceCodeAuth`         | boolean | `false` | Use device code authentication by default      |
+| `sitecoreDevtools.login.allowWrite`             | boolean | `true`  | Allow write operations by default              |
+| `sitecoreDevtools.login.authority`              | string  | `""`    | Custom authority / Identity Server URL         |
+| `sitecoreDevtools.login.audience`               | string  | `""`    | Custom audience for authentication             |
+
+### Module Creation Defaults
+
+| Setting                                            | Type   | Default   | Description                                |
+| -------------------------------------------------- | ------ | --------- | ------------------------------------------ |
+| `sitecoreDevtools.module.defaultNamespace`         | string | `""`      | Default namespace pre-filled in the wizard |
+| `sitecoreDevtools.module.defaultSerializationPath` | string | `"items"` | Default serialization subfolder path       |
 
 ## Module.json Format
 
-The extension expects `module.json` files in the following format:
+The extension expects `module.json` files in the following format. All fields except `name` and `path` within includes are optional:
 
 ```json
 {
-  "namespace": "Feature.Navigation",
+  "namespace": "Feature",
+  "name": "Navigation",
   "items": {
     "includes": [
       {
-        "name": "Navigation",
-        "path": "/sitecore/content/MySite/Navigation"
+        "name": "Feature.Navigation.Templates",
+        "path": "/sitecore/templates/Feature/Navigation",
+        "scope": "ItemAndDescendants",
+        "allowedPushOperations": ["CreateAndUpdate"],
+        "database": "master"
       }
     ]
   }
 }
 ```
+
+### Include Options
+
+| Field                   | Values                                                                         | Description                                   |
+| ----------------------- | ------------------------------------------------------------------------------ | --------------------------------------------- |
+| `name`                  | string                                                                         | Unique identifier for this include (required) |
+| `path`                  | `/sitecore/...`                                                                | Sitecore item path to include (required)      |
+| `scope`                 | `ItemAndDescendants` \| `ItemAndChildren` \| `SingleItem` \| `DescendantsOnly` | Controls which items are serialized           |
+| `allowedPushOperations` | `CreateAndUpdate` \| `CreateOnly` \| `UpdateOnly`                              | Operations permitted during a push            |
+| `database`              | `master` \| `core` \| `web`                                                    | Sitecore database (defaults to `master`)      |
+
+The Create Module wizard generates these files automatically with your chosen options.
 
 ## CLI Commands Executed
 
@@ -330,6 +420,19 @@ MIT
 Contributions are welcome! Please open an issue or submit a pull request.
 
 ## Changelog
+
+### 1.2.0
+
+- Added **Create Module wizard** — guided 5-step flow to scaffold new serialization modules with namespace, name, folder, serialization path, and include configuration
+- Added **Checkbox-based module selection** — check individual modules in the TreeView and bulk pull or push them (`pullCheckedModules`, `pushCheckedModules`)
+- Added **Select All / Deselect All** toolbar actions for the module list
+- Added **Inline pull/push buttons** directly on each module row in the TreeView
+- Added **Enhanced Login** with four authentication flows: Environment Login, Cloud (browser), Device Code, and Client Credentials
+- Added **Login Status Bar Item** — always-visible indicator in the status bar; click to login or logout
+- Added login settings: `login.clientId`, `login.clientCredentialsLogin`, `login.deviceCodeAuth`, `login.allowWrite`, `login.authority`, `login.audience`
+- Added module creation defaults: `module.defaultNamespace`, `module.defaultSerializationPath`
+- Extended `module.json` include format with `scope`, `allowedPushOperations`, and `database` fields
+- Changed `sitecoreDevtools.environment` default to empty string (use blank for cloud login)
 
 ### 1.1.0
 
