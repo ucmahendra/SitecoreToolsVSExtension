@@ -75,17 +75,6 @@ A VS Code extension that provides a GUI interface for Sitecore CLI serialization
 - **Create Deployment**: Create new XM Cloud deployments
 - **List Deployments**: View deployment history
 
-## Screenshots
-
-![Sitecore DevTools Panel](images/panel-placeholder.png)
-_Sitecore DevTools Activity Bar with Serialization Modules TreeView_
-
-![Context Menu](images/context-menu-placeholder.png)
-_Right-click context menu for Pull/Push operations_
-
-![Smart Sync](images/smart-sync-placeholder.png)
-_Smart Sync detecting and pulling changed modules_
-
 ## Requirements
 
 - **VS Code**: Version 1.85.0 or higher
